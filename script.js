@@ -150,11 +150,11 @@ const ru = `
 `;
 
 if (localStorage.language === 'en') {
-    keyboard.innerHTML = `
+  keyboard.innerHTML = `
     ${en}
     `;
 } else if (localStorage.language === 'ru') {
-    keyboard.innerHTML = `
+  keyboard.innerHTML = `
     ${ru}
     `;
 }
@@ -162,7 +162,7 @@ if (localStorage.language === 'en') {
 const textArea = document.querySelector('#write');
 
 const deleteByDel = () => {
-    textArea.textContent = textArea.textContent.substring(0, textArea.selectionStart)
+  textArea.textContent = textArea.textContent.substring(0, textArea.selectionStart)
         + textArea.textContent.substring(textArea.selectionEnd + 1);
 };
 
@@ -174,177 +174,177 @@ const caps = document.querySelector('.capslock');
 // toggle text
 
 const toggleTextContent = (item) => {
-    if (item.textContent === item.textContent.toUpperCase()) {
-        item.textContent = item.textContent.toLowerCase();
-    } else {
-        item.textContent = item.textContent.toUpperCase();
-    }
+  if (item.textContent === item.textContent.toUpperCase()) {
+    item.textContent = item.textContent.toLowerCase();
+  } else {
+    item.textContent = item.textContent.toUpperCase();
+  }
 };
 // highlight
 const check = (location) => {
-    if (event.code.includes(location)) {
-        let eventKey;
-        if (event.key.includes('Arrow')) {
-            eventKey = String(event.key).slice(0, 5).toLowerCase();
-        } else {
-            eventKey = String(event.key).toLowerCase(); // name of the key
-        }
-        const selector = String(location).toLowerCase(); // left/right/down/up
-        const clicked = document.querySelector(`.${selector}-${eventKey}`);
-        clicked.classList.add('active');
-        return true;
+  if (event.code.includes(location)) {
+    let eventKey;
+    if (event.key.includes('Arrow')) {
+      eventKey = String(event.key).slice(0, 5).toLowerCase();
+    } else {
+      eventKey = String(event.key).toLowerCase(); // name of the key
     }
-    return false;
+    const selector = String(location).toLowerCase(); // left/right/down/up
+    const clicked = document.querySelector(`.${selector}-${eventKey}`);
+    clicked.classList.add('active');
+    return true;
+  }
+  return false;
 };
 let keyAlt = false;
 let keyShift = false;
 
 document.addEventListener('keydown', (event) => {
+  keys.forEach((item) => {
+    if (event.code === item.dataset.name) {
+      if (!check('Left') || !check('Right') || !check('Up') || !check('Down')) {
+        item.classList.add('active');
+      }
+    } else if (event.key === item.textContent || event.key === item.dataset.name) {
+      item.classList.add('active');
+    } else if (item.textContent.includes(event.key)) {
+      if (item.classList.contains('symbol')) {
+        item.classList.add('active');
+      }
+    }
+  });
+
+  // backspace
+  if (event.key === 'Backspace') {
+    textArea.textContent = textArea.textContent.substring(0, textArea.textContent.length - 1);
+  }
+  // enter
+  if (event.key === 'Enter') {
+    textArea.textContent += '\n';
+  }
+
+  // caps
+  if (event.getModifierState('CapsLock')) {
+    if (event.code.includes('Key')) {
+      textArea.textContent += event.key.toUpperCase();
+      return;
+    }
+  }
+  if (event.code === 'CapsLock') {
+    if (isCapsLock === true) {
+      caps.classList.remove('active');
+      isCapsLock = false;
+    } else {
+      caps.classList.add('active');
+      isCapsLock = true;
+    }
+    // caps.classList.toggle('active')
     keys.forEach((item) => {
-        if (event.code === item.dataset.name) {
-            if (!check('Left') || !check('Right') || !check('Up') || !check('Down')) {
-                item.classList.add('active');
-            }
-        } else if (event.key === item.textContent || event.key === item.dataset.name) {
-            item.classList.add('active');
-        } else if (item.textContent.includes(event.key)) {
-            if (item.classList.contains('symbol')) {
-                item.classList.add('active');
-            }
-        }
+      if (item.classList.contains('letter')) {
+        toggleTextContent(item);
+      }
     });
+  }
 
-    // backspace
-    if (event.key === 'Backspace') {
-        textArea.textContent = textArea.textContent.substring(0, textArea.textContent.length - 1);
-    }
-    // enter
-    if (event.key === 'Enter') {
-        textArea.textContent += '\n';
-    }
+  // alt
+  if (event.key === 'Alt') {
+    event.preventDefault();
+  }
 
-    // caps
-    if (event.getModifierState('CapsLock')) {
-        if (event.code.includes('Key')) {
-            textArea.textContent += event.key.toUpperCase();
-            return;
-        }
-    }
-    if (event.code === 'CapsLock') {
-        if (isCapsLock === true) {
-            caps.classList.remove('active');
-            isCapsLock = false;
-        } else {
-            caps.classList.add('active');
-            isCapsLock = true;
-        }
-        // caps.classList.toggle('active')
-        keys.forEach((item) => {
-            if (item.classList.contains('letter')) {
-                toggleTextContent(item);
-            }
-        });
-    }
+  // tab
+  if (event.code === 'Tab') {
+    event.preventDefault();
+    textArea.textContent += '\t';
+  }
 
-    // alt
-    if (event.key === 'Alt') {
-        event.preventDefault();
-    }
+  // space
+  if (event.code === 'Space') {
+    textArea.textContent += ' ';
+  }
 
-    // tab
-    if (event.code === 'Tab') {
-        event.preventDefault();
-        textArea.textContent += '\t';
-    }
+  // delete
+  if (event.code === 'NumpadDecimal') {
+    deleteByDel();
+  }
 
-    // space
-    if (event.code === 'Space') {
-        textArea.textContent += ' ';
+  // раскладка
+  if (event.code === 'AltLeft') {
+    keyAlt = true;
+    event.preventDefault();
+  } else if (event.code === 'ShiftLeft') {
+    keyShift = true;
+    event.preventDefault();
+  }
+  if (keyAlt && keyShift) {
+    // смена
+    if (localStorage.language === 'ru') {
+      keyboard.innerHTML = en;
+      localStorage.language = 'en';
+      localStorage.setItem('language', 'en');
+      localStorage.setItem('isCapsLock', isCapsLock);
+      keys = document.querySelectorAll('li');
+      clickOnVirtual();
+    } else if (localStorage.language === 'en') {
+      keyboard.innerHTML = ru;
+      localStorage.language = 'ru';
+      localStorage.setItem('language', 'ru');
+      localStorage.setItem('isCapsLock', isCapsLock);
+      keys = document.querySelectorAll('li');
+      clickOnVirtual();
     }
+  }
 
-    // delete
-    if (event.code === 'NumpadDecimal') {
-        deleteByDel();
-    }
-
-    // раскладка
-    if (event.code === 'AltLeft') {
-        keyAlt = true;
-        event.preventDefault();
-    } else if (event.code === 'ShiftLeft') {
-        keyShift = true;
-        event.preventDefault();
-    }
-    if (keyAlt && keyShift) {
-        // смена
-        if (localStorage.language === 'ru') {
-            keyboard.innerHTML = en;
-            localStorage.language = 'en';
-            localStorage.setItem('language', 'en');
-            localStorage.setItem('isCapsLock', isCapsLock);
-            keys = document.querySelectorAll('li');
-            clickOnVirtual();
-        } else if (localStorage.language === 'en') {
-            keyboard.innerHTML = ru;
-            localStorage.language = 'ru';
-            localStorage.setItem('language', 'ru');
-            localStorage.setItem('isCapsLock', isCapsLock);
-            keys = document.querySelectorAll('li');
-            clickOnVirtual();
-        }
-    }
-
-    // shift и заполнение textArea
-    // textArea.textContent = sessionStorage.text
-    if (event.shiftKey) {
-        keys.forEach((item) => {
-            /* if (!isShift) {
+  // shift и заполнение textArea
+  // textArea.textContent = sessionStorage.text
+  if (event.shiftKey) {
+    keys.forEach((item) => {
+      /* if (!isShift) {
                       if (item.classList.contains('letter')) {
                           toggleTextContent(item)
                           return
                       }
                   } */
-            if (event.key.toLowerCase() === item.textContent || item.textContent.includes(event.key)) {
-                if (item.classList.contains('letter')) {
-                    textArea.textContent += event.key.toUpperCase();
-                } else if (item.classList.contains('symbol')) {
-                    const element = item.querySelector('span:last-of-type');
-                    textArea.textContent += element.textContent;
-                }
-            }
-        });
-    } else {
-        keys.forEach((item) => {
-            if (event.key === item.textContent || item.textContent.includes(event.key)) {
-                if (item.classList.contains('symbol') || item.classList.contains('letter')) {
-                    textArea.textContent += event.key;
-                }
-            }
-        });
-    }
+      if (event.key.toLowerCase() === item.textContent || item.textContent.includes(event.key)) {
+        if (item.classList.contains('letter')) {
+          textArea.textContent += event.key.toUpperCase();
+        } else if (item.classList.contains('symbol')) {
+          const element = item.querySelector('span:last-of-type');
+          textArea.textContent += element.textContent;
+        }
+      }
+    });
+  } else {
+    keys.forEach((item) => {
+      if (event.key === item.textContent || item.textContent.includes(event.key)) {
+        if (item.classList.contains('symbol') || item.classList.contains('letter')) {
+          textArea.textContent += event.key;
+        }
+      }
+    });
+  }
 
-    // sessionStorage.text = textArea.textContent
+  // sessionStorage.text = textArea.textContent
 
-    // arrows
-    if (event.code.includes('Arrow')) {
-        keys.forEach((item) => {
-            if (item.dataset.name === event.code) {
-                textArea.textContent += item.textContent;
-            }
-        });
-    }
+  // arrows
+  if (event.code.includes('Arrow')) {
+    keys.forEach((item) => {
+      if (item.dataset.name === event.code) {
+        textArea.textContent += item.textContent;
+      }
+    });
+  }
 });
 
 // remove highlighting
 document.addEventListener('keyup', (event) => {
-    keyAlt = false;
-    keyShift = false;
-    keys.forEach((item) => {
-        if (!item.classList.contains('capslock') && event.key !== 'Shift') {
-            item.classList.remove('active');
-        }
-    });
-    /* if (event.key === 'Shift') {
+  keyAlt = false;
+  keyShift = false;
+  keys.forEach((item) => {
+    if (!item.classList.contains('capslock') && event.key !== 'Shift') {
+      item.classList.remove('active');
+    }
+  });
+  /* if (event.key === 'Shift') {
           keys.forEach((item) => {
               if (item.classList.contains('letter')) {
                   toggleTextContent(item)
@@ -358,61 +358,61 @@ document.addEventListener('keyup', (event) => {
 clickOnVirtual();
 
 function clickOnVirtual() {
-    keys.forEach((item) => {
-        item.addEventListener('click', (event) => {
-            // highlighting
-            if (!item.classList.contains('capslock')) {
-                item.classList.add('active');
-                setTimeout(() => {
-                    item.classList.remove('active');
-                }, 100);
-            }
-            // caps
-            isCapsLock = localStorage.getItem('isCapsLock');
-            if (item.classList.contains('capslock')) {
-                if (isCapsLock === true) {
-                    isCapsLock = false;
-                    caps.classList.remove('active');
-                } else {
-                    caps.classList.add('active');
-                    isCapsLock = true;
-                }
-                // item.classList.toggle('active')
-                keys.forEach((element) => {
-                    if (element.classList.contains('letter')) {
-                        toggleTextContent(element);
-                    }
-                });
-            }
-            // заполнение text area
-            if (item.classList.contains('letter')) {
-                textArea.textContent += item.textContent;
-            } else if (item.classList.contains('symbol')) {
-                textArea.textContent += item.textContent.substr(0, 1);
-            }
-            // backspace
-            if (item.classList.contains('backspace')) {
-                textArea.textContent = textArea.textContent.substring(0, textArea.textContent.length - 1);
-            }
-            // enter
-            if (item.classList.contains('enter')) {
-                textArea.textContent += '\n';
-            }
-            // space
-            if (item.classList.contains('space')) {
-                textArea.textContent += ' ';
-            }
-            // tab
-            if (item.classList.contains('tab')) {
-                event.preventDefault();
-                textArea.textContent += '\t';
-            }
-            // delete
-            if (item.classList.contains('delete')) {
-                deleteByDel();
-            }
+  keys.forEach((item) => {
+    item.addEventListener('click', (event) => {
+      // highlighting
+      if (!item.classList.contains('capslock')) {
+        item.classList.add('active');
+        setTimeout(() => {
+          item.classList.remove('active');
+        }, 100);
+      }
+      // caps
+      isCapsLock = localStorage.getItem('isCapsLock');
+      if (item.classList.contains('capslock')) {
+        if (isCapsLock === true) {
+          isCapsLock = false;
+          caps.classList.remove('active');
+        } else {
+          caps.classList.add('active');
+          isCapsLock = true;
+        }
+        // item.classList.toggle('active')
+        keys.forEach((element) => {
+          if (element.classList.contains('letter')) {
+            toggleTextContent(element);
+          }
         });
+      }
+      // заполнение text area
+      if (item.classList.contains('letter')) {
+        textArea.textContent += item.textContent;
+      } else if (item.classList.contains('symbol')) {
+        textArea.textContent += item.textContent.substr(0, 1);
+      }
+      // backspace
+      if (item.classList.contains('backspace')) {
+        textArea.textContent = textArea.textContent.substring(0, textArea.textContent.length - 1);
+      }
+      // enter
+      if (item.classList.contains('enter')) {
+        textArea.textContent += '\n';
+      }
+      // space
+      if (item.classList.contains('space')) {
+        textArea.textContent += ' ';
+      }
+      // tab
+      if (item.classList.contains('tab')) {
+        event.preventDefault();
+        textArea.textContent += '\t';
+      }
+      // delete
+      if (item.classList.contains('delete')) {
+        deleteByDel();
+      }
     });
+  });
 }
 
 // курсор убегает после бэкспейс
