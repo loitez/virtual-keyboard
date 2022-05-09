@@ -15,6 +15,9 @@ body.innerHTML = `
 `;
 
 const keyboard = document.querySelector('#keyboard');
+
+const language = localStorage.getItem('language');
+
 const en = `
         <li class="symbol"><span class="off">\`</span><span class="on">~</span></li>
         <li class="symbol"><span class="off">1</span><span class="on">!</span></li>
@@ -149,11 +152,11 @@ const ru = `
         <li class="arrow right-arrow last-item" data-name="ArrowRight">→</li>
 `;
 
-if (localStorage.language === 'en') {
+if (language === 'en') {
   keyboard.innerHTML = `
     ${en}
     `;
-} else if (localStorage.language === 'ru') {
+} else if (language === 'ru') {
   keyboard.innerHTML = `
     ${ru}
     `;
@@ -277,14 +280,14 @@ document.addEventListener('keydown', (event) => {
   }
   if (keyAlt && keyShift) {
     // смена
-    if (localStorage.language === 'ru') {
+    if (language === 'ru') {
       keyboard.innerHTML = en;
       localStorage.language = 'en';
       localStorage.setItem('language', 'en');
       localStorage.setItem('isCapsLock', isCapsLock);
       keys = document.querySelectorAll('li');
       clickOnVirtual();
-    } else if (localStorage.language === 'en') {
+    } else if (language === 'en') {
       keyboard.innerHTML = ru;
       localStorage.language = 'ru';
       localStorage.setItem('language', 'ru');
