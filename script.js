@@ -1,8 +1,6 @@
-alert('приболела :( можно мне один день, пожалуйста, я пофиксю все')
+// alert('приболела :( можно мне один день, пожалуйста, я пофиксю все')
 
 const body = document.querySelector('body');
-
-let isCapsLock = localStorage.getItem('isCapsLock');
 
 // fill body
 
@@ -167,6 +165,74 @@ if (language === 'en') {
   localStorage.setItem('language', 'en');
 }
 
+let isCapsLock = sessionStorage.getItem('isCapsLock');
+
+console.log(isCapsLock)
+
+const caps = document.querySelector('.capslock');
+let keys = document.querySelectorAll('li');
+
+
+
+
+  document.addEventListener('keydown', (event) => {
+    if (isCapsLock === null) {
+      console.log(isCapsLock, 'i am not null!')
+      console.log('key is down')
+      if (event.code.includes('Key')) {
+        if (event.key === event.key.toUpperCase()) {
+          sessionStorage.setItem('isCapsLock', 'true')
+          isCapsLock = sessionStorage.getItem('isCapsLock');
+          console.log(isCapsLock)
+          caps.classList.add('active')
+          keys.forEach((item) => {
+            if (item.classList.contains('letter')) {
+              item.textContent = item.textContent.toUpperCase()
+            }
+          })
+          return
+        } else {
+          sessionStorage.setItem('isCapsLock', 'false')
+          isCapsLock = sessionStorage.getItem('isCapsLock');
+          caps.classList.remove('active')
+          keys.forEach((item) => {
+            if (item.classList.contains('letter')) {
+              item.textContent = item.textContent.toLowerCase()
+            }
+          })
+          return
+        }
+      }
+
+    }
+  })
+
+ /*else {
+  if (isCapsLock === 'false') {
+    caps.classList.add('active')
+    keys.forEach((item) => {
+      if (item.classList.contains('letter')) {
+        item.textContent = item.textContent.toUpperCase()
+      }
+    })
+    sessionStorage.setItem('isCapsLock', 'true');
+    isCapsLock = sessionStorage.getItem('isCapsLock');
+
+  } else {
+   caps.classList.remove('true')
+    keys.forEach((item) => {
+      if (item.classList.contains('letter')) {
+        item.textContent = item.textContent.toLowerCase()
+      }
+    })
+    sessionStorage.setItem('isCapsLock', 'false');
+    isCapsLock = sessionStorage.getItem('isCapsLock');
+  }
+}*/
+
+
+
+
 const textArea = document.querySelector('#write');
 
 const deleteByDel = () => {
@@ -175,9 +241,6 @@ const deleteByDel = () => {
 };
 
 // click
-
-let keys = document.querySelectorAll('li');
-const caps = document.querySelector('.capslock');
 
 // toggle text
 
@@ -208,15 +271,22 @@ let keyAlt = false;
 let keyShift = false;
 
 document.addEventListener('keydown', (event) => {
+  console.log(event.key, event.code)
   keys.forEach((item) => {
     if (event.code === item.dataset.name) {
       if (!check('Left') || !check('Right') || !check('Up') || !check('Down')) {
         item.classList.add('active');
       }
     } else if (event.key === item.textContent || event.key === item.dataset.name) {
+      console.log('check proidena')
       item.classList.add('active');
     } else if (item.textContent.includes(event.key)) {
       if (item.classList.contains('symbol')) {
+        item.classList.add('active');
+      }
+    } else if (event.code.includes(`Key${item.textContent.toUpperCase()}`)) {
+      console.log('includes aha')
+      if  (item.classList.contains('letter')) {
         item.classList.add('active');
       }
     }
@@ -232,36 +302,47 @@ document.addEventListener('keydown', (event) => {
   }
 
   // caps
-  if (event.getModifierState('CapsLock')) {
+  // if (event.getModifierState('CapsLock')) {
+  if (isCapsLock == true) {
+    console.log('does work, true')
     if (event.code.includes('Key')) {
       textArea.textContent += event.key.toUpperCase();
       return;
     }
   }
+  if (isCapsLock == false) {
+    if (event.code.includes('Key')) {
+      console.log('does work')
+      textArea.textContent += event.key.toLowerCase();
+      return;
+    }
+  }
   if (event.code === 'CapsLock') {
-    if (isCapsLock === true) {
+    if (isCapsLock == 'true') {
       caps.classList.remove('active');
-      /*keys.forEach((item) => {
+      keys.forEach((item) => {
         if (item.classList.contains('letter')) {
           item.textContent = item.textContent.toLowerCase()
         }
-      })*/
-      isCapsLock = false;
+      })
+      sessionStorage.setItem('isCapsLock', 'false')
+      isCapsLock = 'false';
     } else {
       caps.classList.add('active');
-      isCapsLock = true;
-      /*keys.forEach((item) => {
+      sessionStorage.setItem('isCapsLock', 'true')
+      isCapsLock = 'true';
+      keys.forEach((item) => {
         if (item.classList.contains('letter')) {
           item.textContent = item.textContent.toUpperCase()
         }
-      })*/
+      })
     }
     // caps.classList.toggle('active')
-    keys.forEach((item) => {
+    /*keys.forEach((item) => {
       if (item.classList.contains('letter')) {
         toggleTextContent(item);
       }
-    });
+    });*/
   }
 
   // alt
@@ -298,14 +379,14 @@ document.addEventListener('keydown', (event) => {
       keyboard.innerHTML = en;
       localStorage.language = 'en';
       localStorage.setItem('language', 'en');
-      localStorage.setItem('isCapsLock', isCapsLock);
+      sessionStorage.setItem('isCapsLock', isCapsLock);
       keys = document.querySelectorAll('li');
       clickOnVirtual();
     } else if (localStorage.language === 'en') {
       keyboard.innerHTML = ru;
       localStorage.language = 'ru';
       localStorage.setItem('language', 'ru');
-      localStorage.setItem('isCapsLock', isCapsLock);
+      sessionStorage.setItem('isCapsLock', isCapsLock);
       keys = document.querySelectorAll('li');
       clickOnVirtual();
     }
@@ -335,6 +416,18 @@ document.addEventListener('keydown', (event) => {
       if (event.key === item.textContent || item.textContent.includes(event.key)) {
         if (item.classList.contains('symbol') || item.classList.contains('letter')) {
           textArea.textContent += event.key;
+        }
+        // english
+      } else if (event.code.includes(`Key${item.textContent.toUpperCase()}`)) {
+        console.log('eto proideno')
+        if (item.classList.contains('letter')) {
+          textArea.textContent += item.textContent;
+        }
+      // russian
+      } else if (event.key === item.textContent.toUpperCase() || event.key === item.textContent.toLowerCase()) {
+        console.log('eto tozhe proideno')
+        if (item.classList.contains('letter')) {
+          textArea.textContent += item.textContent;
         }
       }
     });
@@ -385,21 +478,34 @@ function clickOnVirtual() {
         }, 100);
       }
       // caps
-      isCapsLock = localStorage.getItem('isCapsLock');
+      // isCapsLock = sessionStorage.getItem('isCapsLock');
       if (item.classList.contains('capslock')) {
-        if (isCapsLock === true) {
-          isCapsLock = false;
+        console.log(isCapsLock, 'onclick')
+        if (isCapsLock == 'true') {
+          isCapsLock = 'false';
+          sessionStorage.setItem('isCapsLock', 'false')
           caps.classList.remove('active');
+          keys.forEach((item) => {
+            if (item.classList.contains('letter')) {
+              item.textContent = item.textContent.toLowerCase()
+            }
+          })
         } else {
           caps.classList.add('active');
-          isCapsLock = true;
+          sessionStorage.setItem('isCapsLock', 'true')
+          isCapsLock = 'true';
+          keys.forEach((item) => {
+            if (item.classList.contains('letter')) {
+              item.textContent = item.textContent.toUpperCase()
+            }
+          })
         }
         // item.classList.toggle('active')
-        keys.forEach((element) => {
+        /*keys.forEach((element) => {
           if (element.classList.contains('letter')) {
             toggleTextContent(element);
           }
-        });
+        });*/
       }
       // заполнение text area
       if (item.classList.contains('letter')) {
