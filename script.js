@@ -4,20 +4,6 @@ let isCapsLock = localStorage.getItem('isCapsLock');
 
 // fill body
 
-body.innerHTML = `
-<div class="info">switch keyboard layout: left alt + left shift</div>
-<div class="info-2">please make sure that your keyboard layout matches the virtual one</div>
-<div id="container">
-    <textarea id="write" rows="6" cols="60"></textarea>
-    <ul id="keyboard">
-    </ul>
-</div>
-`;
-
-const keyboard = document.querySelector('#keyboard');
-
-const language = localStorage.getItem('language');
-
 const en = `
         <li class="symbol"><span class="off">\`</span><span class="on">~</span></li>
         <li class="symbol"><span class="off">1</span><span class="on">!</span></li>
@@ -152,6 +138,20 @@ const ru = `
         <li class="arrow right-arrow last-item" data-name="ArrowRight">→</li>
 `;
 
+body.innerHTML = `
+<div class="info">switch keyboard layout: left alt + left shift</div>
+<div class="info-2">please make sure that your keyboard layout matches the virtual one</div>
+<div id="container">
+    <textarea id="write" rows="6" cols="60"></textarea>
+    <ul id="keyboard">
+    </ul>
+</div>
+`;
+
+const keyboard = document.querySelector('#keyboard');
+
+const language = localStorage.getItem('language');
+
 if (language === 'en') {
   keyboard.innerHTML = `
     ${en}
@@ -160,6 +160,9 @@ if (language === 'en') {
   keyboard.innerHTML = `
     ${ru}
     `;
+} else if (!language) {
+  keyboard.innerHTML = `${en}`;
+  localStorage.setItem('language', 'en');
 }
 
 const textArea = document.querySelector('#write');
@@ -279,15 +282,14 @@ document.addEventListener('keydown', (event) => {
     event.preventDefault();
   }
   if (keyAlt && keyShift) {
-    // смена
-    if (language === 'ru') {
+    if (localStorage.language === 'ru') {
       keyboard.innerHTML = en;
       localStorage.language = 'en';
       localStorage.setItem('language', 'en');
       localStorage.setItem('isCapsLock', isCapsLock);
       keys = document.querySelectorAll('li');
       clickOnVirtual();
-    } else if (language === 'en') {
+    } else if (localStorage.language === 'en') {
       keyboard.innerHTML = ru;
       localStorage.language = 'ru';
       localStorage.setItem('language', 'ru');
