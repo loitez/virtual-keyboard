@@ -16,6 +16,7 @@ module.exports = {
     'linebreak-style': ["error", "windows"],
     "no-param-reassign": 0,
     "no-restricted-globals": 0,
-    'no-use-before-define': ["error", { "functions": false }]
+    'no-use-before-define': ["error", { "functions": false }],
+    'max-len': ["error", { "code": 120 }]
   },
 };
