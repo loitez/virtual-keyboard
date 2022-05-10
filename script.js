@@ -1,3 +1,5 @@
+alert('приболела :( можно мне один день, пожалуйста, я пофиксю все')
+
 const body = document.querySelector('body');
 
 let isCapsLock = localStorage.getItem('isCapsLock');
@@ -239,10 +241,20 @@ document.addEventListener('keydown', (event) => {
   if (event.code === 'CapsLock') {
     if (isCapsLock === true) {
       caps.classList.remove('active');
+      /*keys.forEach((item) => {
+        if (item.classList.contains('letter')) {
+          item.textContent = item.textContent.toLowerCase()
+        }
+      })*/
       isCapsLock = false;
     } else {
       caps.classList.add('active');
       isCapsLock = true;
+      /*keys.forEach((item) => {
+        if (item.classList.contains('letter')) {
+          item.textContent = item.textContent.toUpperCase()
+        }
+      })*/
     }
     // caps.classList.toggle('active')
     keys.forEach((item) => {
