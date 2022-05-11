@@ -1,5 +1,3 @@
-alert('приболела :( можно мне один день, пожалуйста, я пофиксю все')
-
 const body = document.querySelector('body');
 
 // fill body
